@@ -25,7 +25,7 @@ And of course VSCode for FRC development (which includes the JDK and gradle).
 ## Usage
 
 1. Use Realterm to connect to the teensy COM port (COM4 on my Windows 10 system). (56700, 8, 1, N which is the Realterm default)
-2. See the serial commands documented in the [CommandProcessor.process()](https://github.com/Team997Coders/MiniPanTiltTeensy/blob/master/src/main/java/CommandProcessor.java) method.
+2. See the serial commands documented in the [CommandProcessor.process()](https://github.com/Team997Coders/MiniPanTiltTeensy/blob/c5175c8d9cf6aac8fe2b29c6fd7d29d29b847805/src/main/java/CommandProcessor.java#L79) method.
 
 or...<p>
 

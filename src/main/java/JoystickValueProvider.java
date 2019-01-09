@@ -1,5 +1,9 @@
 import org.team997coders.deepspace2019.interfaces.IJoystickValueProvider;
 
+/**
+ * Implementation of the IJoystickValueProvider interface to simply
+ * provide a stored double value.
+ */
 public class JoystickValueProvider implements IJoystickValueProvider {
   private double m_value = 0;
 

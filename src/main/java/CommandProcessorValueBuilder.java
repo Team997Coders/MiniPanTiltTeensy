@@ -1,3 +1,7 @@
+/**
+ * This class provides a convenience wrapper for building numbers
+ * being entered from the serial command interface.
+ */
 public class CommandProcessorValueBuilder {
   private int percentage = 0;
   private boolean negation = false;

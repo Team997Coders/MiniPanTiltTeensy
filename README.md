@@ -23,3 +23,9 @@ And of course VSCode for FRC development (which includes the JDK and gradle).
 ## Usage
 
 1. Use Realterm to connect to the teensy COM port (COM4 on my Windows 10 system). (56700, 8, 1, N which is the Realterm default)
+2. See the serial commands documented in the [CommandProcessor.process()](https://github.com/Team997Coders/MiniPanTiltTeensy/blob/master/src/main/java/CommandProcessor.java) method.
+
+or...<p>
+
+1. Use a joystick and the above referenced driver project.
+

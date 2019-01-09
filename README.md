@@ -2,7 +2,7 @@
 
 This project demonstrates the use of a [Teensy 3.5](https://www.pjrc.com/store/teensy35.html) to prototype an FRC robot subsystem, developed in Java. It provides slew and center capabilities to an Adafruit [Mini Pan-Tilt](https://www.adafruit.com/product/1967). The developed code implements WPILib commands and a subsystem. A subset of the WPILib command scheduler has been ported and is run at startup. The commands and subsystem can be directly deployed on a roboRio (if an IServo is implemented against the WPILib) if desired.
 
-This gives the flexibility to run the subsystem as a standalone unit (plugging the teensy into the roboRio), or to plug the servos directly into the roboRio. To call the subsystem as a standalone unit, you would send serial commands using the WPILib SerialPort class. See the [CameraMountJoystickDriver](https://github.com/Team997Coders/CameraMountJoystickDriver) project for a standalone Windows Java application that implements the [serial interface]((https://github.com/Team997Coders/MiniPanTiltTeensy/blob/c5175c8d9cf6aac8fe2b29c6fd7d29d29b847805/src/main/java/CommandProcessor.java#L79).
+This gives the flexibility to run the subsystem as a standalone unit (plugging the teensy into the roboRio), or to plug the servos directly into the roboRio. To call the subsystem as a standalone unit, you would send serial commands using the WPILib SerialPort class. See the [CameraMountJoystickDriver](https://github.com/Team997Coders/CameraMountJoystickDriver) project for a standalone Windows Java application that implements the [serial interface](https://github.com/Team997Coders/MiniPanTiltTeensy/blob/c5175c8d9cf6aac8fe2b29c6fd7d29d29b847805/src/main/java/CommandProcessor.java#L79).
 
 [See entertainment here](https://j.gifs.com/jq7Yjl.gif)
 

@@ -4,6 +4,8 @@ This project demonstrates the use of a [Teensy 3.5](https://www.pjrc.com/store/t
 
 This gives the flexibility to run the subsystem as a standalone unit (plugging the teensy into the roboRio), or to plug the servos directly into the roboRio. To call the subsystem as a standalone unit, you would send serial commands using the WPILib SerialPort class. See the [CameraMountJoystickDriver](https://github.com/Team997Coders/CameraMountJoystickDriver) project for a standalone Windows Java application that implements the [serial interface]().
 
+![](https://j.gifs.com/jq7Yjl.gif)
+
 ## Requirements
 
 1. [Arduino IDE](https://www.arduino.cc/en/Main/Software) (which you do not need to use as an IDE)

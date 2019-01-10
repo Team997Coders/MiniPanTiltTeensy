@@ -3,8 +3,11 @@ package org.team997coders.deepspace2019.subsystems;
 import org.junit.*;
 
 import org.team997coders.deepspace2019.helpers.TestLimitsHelper;
+import org.team997coders.deepspace2019.interfaces.IServo;
+import org.team997coders.deepspace2019.subsystems.CameraMount;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Units tests for the CameraMount subsystem
@@ -81,5 +84,35 @@ public class CameraMountUnitTest {
 
     // Assert
     assertTrue(!helper.getCameraMount().atTiltLimit());
+  }
+
+  @Test
+  public void itTiltsTheMount() {
+    // Assemble
+    IServo panServoMock = mock(IServo.class);
+    IServo tiltServoMock = mock(IServo.class);
+    CameraMount cameraMount = new CameraMount(panServoMock, tiltServoMock, 10, 180, 100, 150);
+
+    // Act
+    cameraMount.tiltToAngle(120);
+
+    // Assert
+    assertEquals(120, cameraMount.getTiltAngleInDegrees());
+    verify(tiltServoMock, times(1)).write(cameraMount.getTiltAngleInDegrees());
+  }
+
+  @Test
+  public void itPansTheMount() {
+    // Assemble
+    IServo panServoMock = mock(IServo.class);
+    IServo tiltServoMock = mock(IServo.class);
+    CameraMount cameraMount = new CameraMount(panServoMock, tiltServoMock, 10, 180, 100, 150);
+
+    // Act
+    cameraMount.panToAngle(120);
+
+    // Assert
+    assertEquals(120, cameraMount.getPanAngleInDegrees());
+    verify(panServoMock, times(1)).write(cameraMount.getPanAngleInDegrees());
   }
 }

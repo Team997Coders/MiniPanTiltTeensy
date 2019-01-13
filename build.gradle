@@ -16,7 +16,7 @@ dependencies {
   compile 'com.github.chuckb.haikuVM:haikuRT:5fdb964c4b'
   compile 'com.github.chuckb.haikuVM:bootstrap:5fdb964c4b'
   compile 'com.github.team997coders:SpartanLib:416f2ab904'
-  compile 'com.github.team997coders:WpilibjEmbedded:b1d87f6995'
+  compile 'com.github.team997coders:WpilibjEmbedded:76cc92500d'
   implementation files("$haikuVMDir/lib/nxt/classes.jar")
   testCompile 'junit:junit:4.12'
   testCompile 'org.mockito:mockito-core:2.23.4'

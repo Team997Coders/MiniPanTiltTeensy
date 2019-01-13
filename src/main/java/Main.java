@@ -1,10 +1,10 @@
 import edu.wpi.first.wpilibj.command.Scheduler;
 
-import hardware.arduino.Servo;
+import org.team997coders.spartanlib.hardware.arduino.Servo;
 
-import org.team997coders.deepspace2019.commands.SlewCamera;
-import org.team997coders.deepspace2019.commands.CenterCamera;
-import org.team997coders.deepspace2019.subsystems.CameraMount;
+import org.team997coders.spartanlib.commands.SlewCamera;
+import org.team997coders.spartanlib.commands.CenterCamera;
+import org.team997coders.spartanlib.subsystems.CameraMount;
 
 
 /**

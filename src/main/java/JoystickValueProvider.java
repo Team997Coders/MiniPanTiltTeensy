@@ -1,4 +1,4 @@
-import org.team997coders.deepspace2019.interfaces.IJoystickValueProvider;
+import org.team997coders.spartanlib.interfaces.IJoystickValueProvider;
 
 /**
  * Implementation of the IJoystickValueProvider interface to simply

@@ -1,8 +1,8 @@
 import java.io.InputStream;
 import java.io.PrintStream;
 
-import org.team997coders.deepspace2019.commands.SlewCamera;
-import org.team997coders.deepspace2019.commands.CenterCamera;
+import org.team997coders.spartanlib.commands.SlewCamera;
+import org.team997coders.spartanlib.commands.CenterCamera;
 
 /**
  * This is a state machine to gather input from presumably

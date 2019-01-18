@@ -33,5 +33,5 @@ or...<p>
 ## WIP
 
 1. Remove the Arduino and Teensyduino pre-install requirements
-2. Move boilerplate gradle tasks out of build.gradle and into a reusable file (maybe vscode plugin?)
+2. ~~Move boilerplate gradle tasks out of build.gradle and into a reusable file~~ (maybe vscode plugin?)
 3. Cut release tag of dependencies so release tags can be used instead of commit tags

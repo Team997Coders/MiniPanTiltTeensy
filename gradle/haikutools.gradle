@@ -1,0 +1,104 @@
+allprojects {
+  repositories {
+    jcenter()
+    maven { url "https://jitpack.io" }
+  }
+}
+
+configurations {
+  haikutools
+}
+
+dependencies {
+  haikutools 'com.github.chuckb:haikuVM:a42304724b'
+  haikutools 'com.github.chuckb.haikuVM:haikuRT:5fdb964c4b'
+  haikutools 'com.github.chuckb.haikuVM:bootstrap:5fdb964c4b'
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+def getJar(String name) {
+  configurations.haikutools.filter { File f ->
+    f.name.contains(name)
+  }.first()
+}
+
+task unzipHaikuVM(type: Copy) {
+  description 'Install local copy of haikutools and embedded JVM.'
+  from zipTree(getJar("build"))
+  include "**/*"
+  into file(haikuVMDir)
+}
+compileJava.dependsOn unzipHaikuVM
+
+tasks.withType(JavaCompile) {
+  options.bootstrapClasspath = files(getJar("haikuRT"), getJar("bootstrap"), "$haikuVMDir/lib/nxt/classes.jar")
+}
+
+clean {
+  delete "HaikuVM"
+  delete "target"
+}
+
+task haikulink (type: JavaExec) {
+  description 'Code generate embedded JVM, system, and user classes into a C project.'
+  inputs.files sourceSets.main.allJava
+  outputs.files fileTree(dir: "HaikuVM")
+  dependsOn "classes"
+  main = "haikuvm.pc.tools.HaikuVM"
+  jvmArgs "-Dhaikuvm.home=$haikuVMDir"
+  jvmArgs "-DCOMMAND_NAME=haikulink"
+  classpath = fileTree(dir: "$haikuVMDir/lib/pc", include: "**/*.jar")
+  def bcp = ""
+  files(sourceSets.main.output.classesDir, configurations.compile, configurations.haikutools, "$haikuVMDir/lib/nxt/classes.jar").each {bcp += "${it};"}
+  args "--bootclasspath", bcp
+  args "--Config", "$haikuVMConfig"
+  args "haikulink"
+  args "-v"
+  args "$projectDir/src/main/java/${mainClass}.java"
+}
+
+task arduinoBuilderCompile (type: Exec) {
+  description 'Cross compile embedded JVM.'
+  dependsOn haikulink
+  inputs.files tasks["haikulink"].outputs.files
+  outputs.file "build/arduino/HaikuVM/HaikuVM.ino.hex"
+  doFirst {
+    mkdir "build/arduino"
+    mkdir "build/arduino/HaikuVM"
+  }
+  if (System.getProperty("os.name").toLowerCase().contains("windows")) {
+    executable "$arduinoDir/arduino-builder.exe"
+  } else {
+    executable "$arduinoDir/arduino-builder"
+  }
+  args "-compile"
+  args "-logger=human"
+  args "-hardware", "$arduinoDir/hardware"
+  args "-tools", "$arduinoDir/tools-builder"
+  args "-tools", "$arduinoDir/hardware/tools/avr"
+  args "-built-in-libraries", "$arduinoDir/libraries"
+  args "-libraries", "$projectDir"
+  args "-fqbn=$fqbn"
+  args "-ide-version=10808"
+  args "-build-path", "$projectDir/build/arduino/HaikuVM"
+  args "-warnings=none"
+  args "-verbose"
+  args "$projectDir/HaikuVM/examples/HaikuVM/HaikuVM.ino"
+}
+
+task deploy (type: Exec) {
+  description 'Deploy binary to embedded platform.'
+  dependsOn arduinoBuilderCompile
+  inputs.file "build/arduino/HaikuVM/HaikuVM.ino.hex"
+  if (System.getProperty("os.name").toLowerCase().contains("windows")) {
+    executable "$arduinoDir/hardware/tools/teensy_post_compile.exe"
+  } else {
+    executable "$arduinoDir/hardware/tools/teensy_post_compile"
+  }
+  args "-file=HaikuVM.ino"
+  args "\"-path=$projectDir/build/arduino/HaikuVM\""
+  args "\"-tools=$arduinoDir/hardware/tools\""
+  args "-board=$board"
+}

@@ -2,105 +2,27 @@ plugins {
   id 'java'
 }
 
-def mainClass = "Main"
-def haikuVMConfig = "teensyduinoVSCode"
-
-allprojects {
-    repositories {
-        jcenter()
-        maven { url "https://jitpack.io" }
-    }
+// User modifiable parameters for the project
+ext {
+  // Class name of static main entry point
+  mainClass = "Main"
+  // Haiku configuration to use when running haikulink (see haikuVM.properties in HaikuVM config directory)
+  haikuVMConfig = "teensyduinoVSCode"
+  // Local location to contain base embedded JVM and haikutools
+  haikuVMDir = "C:/haikuVM"
+  // Location where Arduino software is installed (can we automate?)
+  arduinoDir = "C:/Program Files (x86)/Arduino"
+  // Fully Qualified Board Name as defined by Arduino builder (see https://github.com/arduino/arduino-builder)
+  fqbn = "teensy:avr:teensy35:usb=serial,speed=120,opt=o2std,keys=en-us"
+  // Board as identifier by teensy_post_compile tool for automated deployment of hex file (part of Teensyduino)
+  board = "TEENSY35"
 }
 
 dependencies {
-  compile 'com.github.chuckb:haikuVM:a42304724b'
-  compile 'com.github.chuckb.haikuVM:haikuRT:5fdb964c4b'
-  compile 'com.github.chuckb.haikuVM:bootstrap:5fdb964c4b'
   compile 'com.github.team997coders:SpartanLib:416f2ab904'
   compile 'com.github.team997coders:WpilibjEmbedded:76cc92500d'
 }
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+// Nothings more to modify beyond this point
 
-def getJar(String name) {
-  configurations.compile.filter { File f ->
-    f.name.contains(name)
-  }.first()
-}
-
-task unzipHaikuVM(type: Copy) {
-  from zipTree(getJar("build"))
-  include "**/*"
-  into file(haikuVMDir)
-}
-compileJava.dependsOn unzipHaikuVM
-
-
-tasks.withType(JavaCompile) {
-  options.bootstrapClasspath = files(getJar("haikuRT"), getJar("bootstrap"), "$haikuVMDir/lib/nxt/classes.jar")
-}
-
-clean {
-  delete "HaikuVM"
-  delete "target"
-}
-
-task haikulink (type: JavaExec) {
-  inputs.files sourceSets.main.allJava
-  outputs.files fileTree(dir: "HaikuVM")
-  dependsOn "classes"
-  main = "haikuvm.pc.tools.HaikuVM"
-  jvmArgs "-Dhaikuvm.home=$haikuVMDir"
-  jvmArgs "-DCOMMAND_NAME=haikulink"
-  classpath = fileTree(dir: "$haikuVMDir/lib/pc", include: "**/*.jar")
-  def bcp = ""
-  files(sourceSets.main.output.classesDir, configurations.compile, "$haikuVMDir/lib/nxt/classes.jar").each {bcp += "${it};"}
-  args "--bootclasspath", bcp
-  args "--Config", "$haikuVMConfig"
-  args "haikulink"
-  args "-v"
-  args "$projectDir/src/main/java/${mainClass}.java"
-}
-
-task arduinoBuilderCompile (type: Exec) {
-  dependsOn haikulink
-  inputs.files tasks["haikulink"].outputs.files
-  outputs.file "build/arduino/HaikuVM/HaikuVM.ino.hex"
-  doFirst {
-    mkdir "build/arduino"
-    mkdir "build/arduino/HaikuVM"
-  }
-  if (System.getProperty("os.name").toLowerCase().contains("windows")) {
-    executable "$arduinoDir/arduino-builder.exe"
-  } else {
-    executable "$arduinoDir/arduino-builder"
-  }
-  args "-compile"
-  args "-logger=human"
-  args "-hardware", "$arduinoDir/hardware"
-  args "-tools", "$arduinoDir/tools-builder"
-  args "-tools", "$arduinoDir/hardware/tools/avr"
-  args "-built-in-libraries", "$arduinoDir/libraries"
-  args "-libraries", "$projectDir"
-  args "-fqbn=$fqbn"
-  args "-ide-version=10808"
-  args "-build-path", "$projectDir/build/arduino/HaikuVM"
-  args "-warnings=none"
-  args "-verbose"
-  args "$projectDir/HaikuVM/examples/HaikuVM/HaikuVM.ino"
-}
-
-task deploy (type: Exec) {
-  dependsOn arduinoBuilderCompile
-  inputs.file "build/arduino/HaikuVM/HaikuVM.ino.hex"
-  if (System.getProperty("os.name").toLowerCase().contains("windows")) {
-    executable "$arduinoDir/hardware/tools/teensy_post_compile.exe"
-  } else {
-    executable "$arduinoDir/hardware/tools/teensy_post_compile"
-  }
-  args "-file=HaikuVM.ino"
-  args "\"-path=$projectDir/build/arduino/HaikuVM\""
-  args "\"-tools=$arduinoDir/hardware/tools\""
-  args "-board=$board"
-}
+apply from: "gradle/haikutools.gradle"

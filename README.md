@@ -10,8 +10,7 @@ This gives the flexibility to run the subsystem as a standalone unit (plugging t
 
 1. [Arduino IDE](https://www.arduino.cc/en/Main/Software) (which you do not need to use as an IDE)
 2. [Teensyduino](https://www.pjrc.com/teensy/teensyduino.html)
-3. [HaikuVM](https://github.com/chuckb/haikuVM) (put this in c:/HaikuVM directory)
-4. [Realterm](https://sourceforge.net/projects/realterm/) (optional if you want to send commands manually to the teensy)
+3. [Realterm](https://sourceforge.net/projects/realterm/) (optional if you want to send commands manually to the teensy)
 
 And of course VSCode for FRC development (which includes the JDK and gradle).
 
@@ -30,3 +29,8 @@ And of course VSCode for FRC development (which includes the JDK and gradle).
 or...<p>
 
 1. Use a joystick and the above referenced driver project.
+
+## WIP
+
+1. Remove the Arduino and Teensyduino pre-install requirements
+2. Move boilerplate gradle tasks out of build.gradle and into a reusable file (maybe vscode plugin?)

@@ -13,26 +13,32 @@ allprojects {
 }
 
 dependencies {
+  compile 'com.github.chuckb:haikuVM:a42304724b'
   compile 'com.github.chuckb.haikuVM:haikuRT:5fdb964c4b'
   compile 'com.github.chuckb.haikuVM:bootstrap:5fdb964c4b'
   compile 'com.github.team997coders:SpartanLib:416f2ab904'
   compile 'com.github.team997coders:WpilibjEmbedded:76cc92500d'
-  implementation files("$haikuVMDir/lib/nxt/classes.jar")
-  testCompile 'junit:junit:4.12'
-  testCompile 'org.mockito:mockito-core:2.23.4'
 }
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-def getHaikuRTJar() {
+def getJar(String name) {
   configurations.compile.filter { File f ->
-    f.name.contains("haikuRT")
+    f.name.contains(name)
   }.first()
 }
 
+task unzipHaikuVM(type: Copy) {
+  from zipTree(getJar("build"))
+  include "**/*"
+  into file(haikuVMDir)
+}
+compileJava.dependsOn unzipHaikuVM
+
+
 tasks.withType(JavaCompile) {
-  options.bootstrapClasspath = files(getHaikuRTJar(), "$haikuVMDir/lib/nxt/classes.jar")
+  options.bootstrapClasspath = files(getJar("haikuRT"), getJar("bootstrap"), "$haikuVMDir/lib/nxt/classes.jar")
 }
 
 clean {
@@ -77,7 +83,7 @@ task arduinoBuilderCompile (type: Exec) {
   args "-tools", "$arduinoDir/hardware/tools/avr"
   args "-built-in-libraries", "$arduinoDir/libraries"
   args "-libraries", "$projectDir"
-  args "-fqbn=teensy:avr:teensy35:usb=serial,speed=120,opt=o2std,keys=en-us"
+  args "-fqbn=$fqbn"
   args "-ide-version=10808"
   args "-build-path", "$projectDir/build/arduino/HaikuVM"
   args "-warnings=none"
@@ -96,5 +102,5 @@ task deploy (type: Exec) {
   args "-file=HaikuVM.ino"
   args "\"-path=$projectDir/build/arduino/HaikuVM\""
   args "\"-tools=$arduinoDir/hardware/tools\""
-  args "-board=TEENSY35"
+  args "-board=$board"
 }

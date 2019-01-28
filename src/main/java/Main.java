@@ -32,7 +32,9 @@ public class Main {
     CenterCamera centerCamera = new CenterCamera(cameraMount);
     JoystickValueProvider panRateProvider = new JoystickValueProvider();
     JoystickValueProvider tiltRateProvider = new JoystickValueProvider();
-    SlewCamera slewCamera = new SlewCamera(cameraMount, panRateProvider, tiltRateProvider);
+    // Set rates: 180 degrees in 2 seconds with scheduler pumping every 20ms
+    // Which should be 1.8 degrees per scheduler tick
+    SlewCamera slewCamera = new SlewCamera(cameraMount, panRateProvider, tiltRateProvider, 2, 20.0);
 
     // Wire up command processor
     CommandProcessorValueBuilder valueBuilder = new CommandProcessorValueBuilder();

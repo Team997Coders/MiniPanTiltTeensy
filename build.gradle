@@ -19,10 +19,10 @@ ext {
 }
 
 dependencies {
-  compile 'com.github.team997coders:SpartanLib:416f2ab904'
+  compile 'com.github.team997coders:SpartanLib:63e6872a64'
   compile 'com.github.team997coders:WpilibjEmbedded:76cc92500d'
 }
 
-// Nothings more to modify beyond this point
+// Nothing more to modify beyond this point
 
 apply from: "gradle/haikutools.gradle"

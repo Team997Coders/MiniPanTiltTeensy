@@ -94,10 +94,21 @@ public class CommandProcessor {
     if (echo) {
       m_output.println(input);
     }
-    String reply = Integer.toHexString(m_cameraMount.getRoundedTiltAngleInDegrees()) + ":" + Integer.toHexString(m_cameraMount.getRoundedPanAngleInDegrees()); 
+    String reply = toHexStringPadded(m_cameraMount.getRoundedTiltAngleInDegrees()) + ":" + toHexStringPadded(m_cameraMount.getRoundedPanAngleInDegrees()); 
     m_output.print(reply);
     if (echo) {
       m_output.println("");
+    }
+  }
+
+  private static String toHexStringPadded(int number) {
+    String toHex = Integer.toHexString(number);
+    if (toHex.length() == 0) {
+      return "00";
+    } else if (toHex.length() == 1) {
+      return "0" + toHex;
+    } else {
+      return toHex;
     }
   }
 

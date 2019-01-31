@@ -45,7 +45,8 @@ public class Main {
         panRateProvider,
         tiltRateProvider,
         centerCamera,
-        slewCamera);
+        slewCamera,
+        cameraMount);
 
     // Start command scheduler
     SchedulerTask schedulerTask = new SchedulerTask(Scheduler.getInstance());

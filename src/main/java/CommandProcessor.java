@@ -1,7 +1,9 @@
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 
 import org.team997coders.spartanlib.commands.SlewCamera;
+import org.team997coders.spartanlib.subsystems.CameraMount;
 import org.team997coders.spartanlib.commands.CenterCamera;
 
 /**
@@ -17,6 +19,7 @@ public class CommandProcessor {
   private final JoystickValueProvider m_tiltValueProvider;
   private final CenterCamera m_centerCamera;
   private final SlewCamera m_slewCamera;
+  private final CameraMount m_cameraMount;
 
   private boolean echo = false;
 
@@ -37,7 +40,8 @@ public class CommandProcessor {
       JoystickValueProvider panValueProvider,
       JoystickValueProvider tiltValueProvider,
       CenterCamera centerCamera,
-      SlewCamera slewCamera) {
+      SlewCamera slewCamera,
+      CameraMount cameraMount) {
 
     // Keep references to dependencies
     m_input = input;
@@ -47,6 +51,7 @@ public class CommandProcessor {
     m_tiltValueProvider = tiltValueProvider;
     m_centerCamera = centerCamera;
     m_slewCamera = slewCamera;
+    m_cameraMount = cameraMount;
 
     // Reset the value builder to make sure we are ready to build
     m_valueBuilder.reset();
@@ -77,12 +82,33 @@ public class CommandProcessor {
   }
 
   /**
+   * Reply back to the get angle command with the tilt
+   * and the pan angles (in that order). Replied as two
+   * hex strings delimited by a colon...yuck. Binary writing not available
+   * on PrintStream implementation.
+   * 
+   * These angles are from 0 to 180 degrees, subject to pan/tilt limitations.
+   * Center is 90 degrees.
+   */
+  private void replytoAngle(char input) throws IOException {
+    if (echo) {
+      m_output.println(input);
+    }
+    String reply = Integer.toHexString(m_cameraMount.getRoundedTiltAngleInDegrees()) + ":" + Integer.toHexString(m_cameraMount.getRoundedPanAngleInDegrees()); 
+    m_output.print(reply);
+    if (echo) {
+      m_output.println("");
+    }
+  }
+
+  /**
    * Process input characters and perform camera mount movement commands.<p>
    * Commands are as follows:<p>
    * <ul>
    *   <li>e - Turn echo on/off (defaults to off). If on, this will echo all command characters
    *           and send a CRLF once commands are executed</li>
    *   <li>c - Center pan and tilt at 90 degrees
+   *   <li>a - Get tilt and pan angles (int that order) in degrees. Center is 90 degrees.
    *   <li>p[-]nnn - Pan in a positive or negative direction at a speed given by the percentage of maximum
    *   <li>t[-]nnn - Tilt in a positive or negative direction at a speed given by the percentage of maximum
    * </ul>
@@ -90,6 +116,7 @@ public class CommandProcessor {
    * <ul>
    *   <li>Ready - Upon first connection to the serial port
    *   <li>Ok - Sent in response to receiving a command
+   *   <li>[hex integer]:[hex integer] - Sent in response to the 'a' command
    * </ul>
    */
   public void process() {
@@ -122,6 +149,10 @@ public class CommandProcessor {
           acknowledge(input, true);
           m_valueBuilder.reset();
           break;
+        case 'a':
+          replytoAngle(input);
+          m_valueBuilder.reset();
+          break;
         case 'e':
           echo = !echo;
           acknowledge(input, true);
@@ -133,7 +164,11 @@ public class CommandProcessor {
           break;
       }
     } catch (Exception e) {
-      System.out.println(e);
+      // TODO: Wire this up to System.err and make System.err
+      // write to the teensy's UART.
+      if (echo) {
+        System.out.println(e);
+      }
     }
   }
 }
